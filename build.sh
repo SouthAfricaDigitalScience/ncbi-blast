@@ -4,7 +4,7 @@
 #  add the dependencies
 module add ci
 
-SOURCE_FILE=${NAME}-${VERSION}-src.tar.gz
+SOURCE_FILE=${NAME}-${VERSION}+-src.tar.gz
 
 echo "REPO_DIR is "
 echo $REPO_DIR
@@ -24,7 +24,7 @@ mkdir -p ${SOFT_DIR}
 if [ ! -e ${SRC_DIR}/${SOURCE_FILE}.lock ] && [ ! -s ${SRC_DIR}/${SOURCE_FILE} ] ; then
   touch  ${SRC_DIR}/${SOURCE_FILE}.lock
   echo "seems like this is the first build - let's geet the source"
-  wget http://mirror.ufs.ac.za/gnu/gnu/gmp/${SOURCE_FILE} -O ${SRC_DIR}/${SOURCE_FILE}
+  wget ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/${SOURCE_FILE} -O ${SRC_DIR}/${SOURCE_FILE}
   echo "releasing lock"
   rm -v ${SRC_DIR}/${SOURCE_FILE}.lock
 elif [ -e ${SRC_DIR}/${SOURCE_FILE}.lock ] ; then
@@ -36,11 +36,9 @@ elif [ -e ${SRC_DIR}/${SOURCE_FILE}.lock ] ; then
 else
   echo "continuing from previous builds, using source at " ${SRC_DIR}/${SOURCE_FILE}
 fi
-tar xjf  ${SRC_DIR}/${SOURCE_FILE} -C ${WORKSPACE} --skip-old-files
-mkdir -p ${WORKSPACE}/${NAME}-${VERSION}/build-${BUILD_NUMBER}
-cd ${WORKSPACE}/${NAME}-${VERSION}/build-${BUILD_NUMBER}
-../configure ABI=64 \
---with-gnu-ld \
---enable-shared \
+tar xzf  ${SRC_DIR}/${SOURCE_FILE} -C ${WORKSPACE} --skip-old-files
+mkdir -p ${WORKSPACE}/${NAME}-${VERSION}+-src/c++/build-${BUILD_NUMBER}
+cd ${WORKSPACE}/${NAME}-${VERSION}+-src/c++/build-${BUILD_NUMBER}
+../configure \
 --prefix=${SOFT_DIR}
-make -j 2
+make
